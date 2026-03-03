@@ -5,7 +5,7 @@ import logging
 
 from app.database import connect_db, disconnect_db
 from app.config import settings
-from app.routers import auth, instagram, webhook, schedule
+from app.routers import auth, instagram, webhook, schedule, analytics
 from app.scheduler import start_scheduler, stop_scheduler
 
 logging.basicConfig(
@@ -47,6 +47,7 @@ app.include_router(auth.router)
 app.include_router(instagram.router)
 app.include_router(webhook.router)
 app.include_router(schedule.router)
+app.include_router(analytics.router)
 
 
 # ── Health ────────────────────────────────────────────────
