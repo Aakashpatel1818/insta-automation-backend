@@ -11,6 +11,11 @@ class UserModel(BaseModel):
     email: str
     hashed_password: str
     is_active: bool = True
+    is_banned: bool = False
+    role: str = "user"           # user | admin | superadmin
+    plan: str = "free"           # free | pro | enterprise
+    coins: int = 0
+    email_verified: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

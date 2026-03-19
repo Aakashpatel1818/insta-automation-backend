@@ -8,6 +8,7 @@ from bson import ObjectId
 from app.schemas.schedule import SchedulePostRequest, ScheduledPostPublic
 from app.dependencies import get_current_user
 from app.database import get_db
+from app.plans import get_plan_limits
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,22 @@ async def schedule_post(
             status_code=404,
             detail="No Instagram account connected. Go to /instagram/connect first."
         )
+
+    # ── Enforce max_scheduled_posts plan limit ──────────────────
+    plan               = current_user.get("plan", "free")
+    limits             = get_plan_limits(plan)
+    max_scheduled      = limits["max_scheduled_posts"]
+    if max_scheduled is not None:
+        pending_count = await db["scheduled_posts"].count_documents({
+            "user_id": str(current_user["_id"]),
+            "status":  "pending",
+        })
+        if pending_count >= max_scheduled:
+            raise HTTPException(
+                status_code=403,
+                detail=f"Your {plan} plan allows {max_scheduled} pending scheduled post(s). "
+                       f"You have {pending_count}. Publish or cancel existing posts, or upgrade.",
+            )
 
     # Must be in the future
     if body.scheduled_at <= datetime.utcnow():

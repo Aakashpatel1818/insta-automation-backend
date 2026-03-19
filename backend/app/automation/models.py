@@ -11,7 +11,7 @@ class AutomationSettings(BaseModel):
     auto_dm: bool = False
     delay_enabled: bool = True
     is_active: bool = True
-    cooldown_hours: float = 24.0   # 0 = disabled, any positive = hours between triggers per user
+    cooldown_hours: float = 24.0
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
@@ -23,7 +23,7 @@ class AutomationSettingsRequest(BaseModel):
     auto_dm: bool = False
     delay_enabled: bool = True
     is_active: bool = True
-    cooldown_hours: float = 24.0   # 0 = disabled, any positive = hours between triggers per user
+    cooldown_hours: float = 24.0
 
 
 # ── Keyword Rules ─────────────────────────────────────────
@@ -42,21 +42,38 @@ class KeywordRule(BaseModel):
 class KeywordRuleRequest(BaseModel):
     post_id: str
     account_id: str
-    automation_id: Optional[str] = None      # links rule to specific automation
+    automation_id: Optional[str] = None
     trigger_words: List[str]
     response: str
+    responses: List[str] = []             # multiple reply variants — engine picks random
     reply_comment: bool = True
     send_dm: bool = False
     is_active: bool = True
-    # Opening Message (DM sent immediately when keyword is triggered)
+    # Opening Message
     opening_message: str = ""
+    opening_messages: List[str] = []      # multiple opening message variants
     opening_message_btn: str = ""
     opening_message_btn_url: str = ""
-    # Follow DM (separate DM sent after opening message)
+    # Follow DM
     follow_dm_message: str = ""
-    # DM Actions (buttons sent as plain text in DM)
+    # DM Actions
     dm_actions: list = []
+    # ── Email Collection ──────────────────────────────────
+    collect_email: bool = False          # toggle — if True, ask for email after DM
+    email_prompt: str = ""               # custom text sent asking for email
 
+
+# ── Collected User (email capture) ───────────────────────
+class CollectedUser(BaseModel):
+    ig_user_id: str                      # Instagram scoped user ID (commenter_id)
+    account_id: str                      # which IG account triggered this
+    automation_id: Optional[str] = None
+    username: Optional[str] = None       # IG username if available
+    email: Optional[str] = None
+    email_captured_at: Optional[datetime] = None
+    source: str = "comment"              # comment | story | dm
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 # ── DM / Action Log ───────────────────────────────────────
@@ -69,7 +86,7 @@ class AutomationLog(BaseModel):
     commenter_id: str
     comment_text: str
     keyword_triggered: str
-    action_taken: str        # reply | dm | reply+dm | none
+    action_taken: str
     reply_sent: bool = False
     dm_sent: bool = False
     success: bool = True

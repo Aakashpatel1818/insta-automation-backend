@@ -11,6 +11,7 @@ class InstagramAccountPublic(BaseModel):
     id: str
     instagram_user_id: str
     username: str
+    page_name: Optional[str] = None
     token_expires_at: Optional[datetime]
     connected_at: datetime
     is_active: bool = False  # currently selected account

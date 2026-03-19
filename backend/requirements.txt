@@ -20,5 +20,12 @@ alembic>=1.13.0
 # APScheduler
 apscheduler>=3.10.0
 
+# Socket.io
+python-socketio>=5.11.0
+python-engineio>=4.9.0
+
 # Image processing
 Pillow>=10.0.0
+
+# Email (OTP sending)
+aiosmtplib>=3.0.0

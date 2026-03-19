@@ -69,7 +69,7 @@ async def refresh_monthly_account_insights():
                 data = await _fetch_account_insights_api(
                     ig_user_id=account["instagram_user_id"],
                     access_token=account["access_token"],
-                    period="month",
+                    period="month",  # accounts_engaged used as impressions inside this function
                 )
                 await log_api_call(session, account_id, "scheduler_monthly_refresh")
 

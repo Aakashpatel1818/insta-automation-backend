@@ -9,8 +9,10 @@ engine = create_async_engine(
     settings.POSTGRES_URL,
     echo=False,
     pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    pool_size=settings.PG_POOL_SIZE,
+    max_overflow=settings.PG_MAX_OVERFLOW,
+    pool_timeout=30,       # wait up to 30s for a free connection
+    pool_recycle=1800,     # recycle connections after 30min to avoid stale sockets
 )
 
 AsyncSessionLocal = async_sessionmaker(
@@ -36,6 +38,7 @@ async def init_pg_db():
             "ALTER TABLE api_usage_logs ALTER COLUMN timestamp TYPE TIMESTAMPTZ USING timestamp AT TIME ZONE 'UTC'",
             "ALTER TABLE account_monthly_insights ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC'",
             "ALTER TABLE post_insights_cache ALTER COLUMN updated_at TYPE TIMESTAMPTZ USING updated_at AT TIME ZONE 'UTC'",
+            "ALTER TABLE post_list_cache ALTER COLUMN posts_json TYPE TEXT",
         ]
         for sql in migrations:
             try:

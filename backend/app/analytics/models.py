@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Float, DateTime, UniqueConstraint, Index
+from sqlalchemy import Column, String, Integer, Float, DateTime, UniqueConstraint, Index, Text
 from sqlalchemy.sql import func
 from app.analytics.pg_database import Base
 
@@ -60,6 +60,22 @@ class PostInsightsCache(Base):
 
     def __repr__(self):
         return f"<PostCache {self.post_id} {self.period}>"
+
+
+class PostListCache(Base):
+    """
+    Caches the full posts list from /me/media.
+    Refreshed at most once every 6 hours per account.
+    """
+    __tablename__ = "post_list_cache"
+
+    id           = Column(Integer, primary_key=True, autoincrement=True)
+    account_id   = Column(String, nullable=False, unique=True, index=True)
+    posts_json   = Column(Text, nullable=False, default="[]")  # Text avoids VARCHAR(n) limit for large post lists
+    updated_at   = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    def __repr__(self):
+        return f"<PostListCache {self.account_id}>"
 
 
 class ApiUsageLog(Base):

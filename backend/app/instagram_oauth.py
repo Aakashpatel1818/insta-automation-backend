@@ -19,7 +19,7 @@ def build_auth_url(state: str) -> str:
         f"&client_id={settings.INSTAGRAM_APP_ID}"
         f"&redirect_uri={settings.INSTAGRAM_REDIRECT_URI}"
         f"&response_type=code"
-        f"&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights"
+        f"&scope=instagram_business_basic,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_content_publish,instagram_business_manage_insights,instagram_manage_insights"
         f"&state={state}"
     )
     return AUTH_BASE + params
